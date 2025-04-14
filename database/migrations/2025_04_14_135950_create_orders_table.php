@@ -1,3 +1,5 @@
+// File: database/migrations/2025_04_14_135950_create_orders_table.php
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -14,25 +16,19 @@ class CreateOrdersTable extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id(); // Primary Key: order number/id
-            // Foreign key: the customer who places the order
+            $table->id();  // Order ID (Primary Key)
             $table->unsignedBigInteger('customer_id');
             $table->dateTime('pickup_datetime');
             $table->decimal('total_price', 8, 2);
-            // We store a list of items (for example as JSON) in this text field.
             $table->text('list_of_items');
-            // Foreign key: the employee id who took the order; can be nullable if not yet assigned.
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->timestamps();
 
-            // Set up foreign key constraints.
-            $table->foreign('customer_id')
-                  ->references('id')->on('customers')
-                  ->onDelete('cascade');
+            // Assume customer's foreign key is defined in the customers migration.
+            // $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
 
-            $table->foreign('employee_id')
-                  ->references('id')->on('employees')
-                  ->onDelete('set null');
+            // Omit employee foreign key for now until employees table exists.
+            // Later, you can add it with a separate migration.
         });
     }
 
@@ -46,5 +42,6 @@ class CreateOrdersTable extends Migration
         Schema::dropIfExists('orders');
     }
 }
+
 
 

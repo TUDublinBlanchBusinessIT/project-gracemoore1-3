@@ -14,15 +14,16 @@ class CreateCustomersTable extends Migration
     public function up(): void
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->id(); // Primary key: customer id
+            $table->id();
             $table->string('name');
-            $table->string('number'); // phone number
-            // Most recent order (nullable foreign key to orders table)
+            $table->string('number');
+            // Originally: adding the foreign key constraint:
+            // $table->unsignedBigInteger('most_recent_order_id')->nullable();
+            // $table->foreign('most_recent_order_id')
+            //     ->references('id')->on('orders')
+            //     ->onDelete('set null');
+            // Instead, define the column without the constraint:
             $table->unsignedBigInteger('most_recent_order_id')->nullable();
-            $table->foreign('most_recent_order_id')
-                  ->references('id')
-                  ->on('orders')
-                  ->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -37,5 +38,3 @@ class CreateCustomersTable extends Migration
         Schema::dropIfExists('customers');
     }
 }
-
-

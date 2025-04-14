@@ -14,16 +14,11 @@ class CreateEmployeesTable extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->id(); // Primary Key: employee id
+            $table->id(); // Employee ID (Primary Key)
             $table->string('name');
-            // This column holds the most recent customer (foreign key to customers.id)
-            $table->unsignedBigInteger('last_customer_id')->nullable();
+            $table->date('dob'); // Date of Birth
+            $table->unsignedBigInteger('order_count')->default(0); // Order count (to be updated as orders are assigned)
             $table->timestamps();
-
-            // Foreign key constraint. When the referenced customer is deleted, set this to null.
-            $table->foreign('last_customer_id')
-                  ->references('id')->on('customers')
-                  ->onDelete('set null');
         });
     }
 
@@ -37,3 +32,4 @@ class CreateEmployeesTable extends Migration
         Schema::dropIfExists('employees');
     }
 }
+
