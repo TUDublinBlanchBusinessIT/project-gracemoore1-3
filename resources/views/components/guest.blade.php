@@ -1,4 +1,5 @@
-<!-- resources/views/components/guest-layout.blade.php -->
-<div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
+<div class="min-h-screen bg-yellow-50 flex items-center justify-center py-6">
+    <!-- this will center the card + logo on a light bakery‑tone background -->
     {{ $slot }}
 </div>
+
