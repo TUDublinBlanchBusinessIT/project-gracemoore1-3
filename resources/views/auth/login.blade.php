@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-guest>
     {{-- Card container with a max‑width so it never overflows --}}
     <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
       
@@ -75,5 +75,5 @@
         </a>
       </p>
     </div>
-</x-guest-layout>
+</x-guest>
 
