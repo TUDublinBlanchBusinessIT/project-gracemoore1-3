@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-  <h1 class="text-2xl font-bold mb-6 text-center">Dashboard</h1>
+  <h1 class="text-2xl font-bold mb-6 text-center">
+    Welcome to The Bakery,<br>{{ auth()->user()->name }}!
+  </h1>
 
   <div class="flex justify-center">
     <form method="POST" action="{{ route('logout') }}">
@@ -12,6 +14,7 @@
     </form>
   </div>
 @endsection
+
 
 
 
