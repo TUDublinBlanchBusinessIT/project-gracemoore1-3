@@ -1,9 +1,11 @@
-<div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-    <div>
-        {{ $logo }}
-    </div>
+<!-- resources/views/components/authentication-card.blade.php -->
+<div class="bg-white shadow-md sm:rounded-lg p-6">
+    @isset($logo)
+        <div class="mb-4 flex justify-center">
+            {{ $logo }}
+        </div>
+    @endisset
 
-    <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-        {{ $slot }}
-    </div>
+    <!-- This is where any child content passed via the <x-authentication-card> ... </x-authentication-card> will go -->
+    {{ $slot }}
 </div>

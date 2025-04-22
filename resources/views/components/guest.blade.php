@@ -1,7 +1,14 @@
-<div class="min-h-screen bg-yellow-50 flex items-center justify-center py-6">
-    <!-- this will center the card + logo on a light bakery‑tone background -->
+<!-- resources/views/layouts/guest.blade.php -->
+<div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+    <div>
+        <a href="/">
+            <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+        </a>
+    </div>
+
     {{ $slot }}
 </div>
+
 
 
 

@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_','-',app()->getLocale()) }}">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ config('app.name', 'Laravel') }}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  {{-- This will pull in your compiled Tailwind + JS --}}
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  {{-- Pull in your Tailwind CSS + any JS --}}
+  @vite(['resources/css/app.css','resources/js/app.js'])
+  <title>{{ config('app.name','My Bakery') }}</title>
 </head>
-<body class="bg-amber-50 flex items-center justify-center min-h-screen font-sans antialiased">
-  {{-- Centered “card” container --}}
-  <div class="w-full max-w-md bg-amber-100 p-8 rounded-xl shadow-md">
-    {{ $slot }}
-  </div>
+<body class="bg-amber-50 flex items-center justify-center min-h-screen font-sans">
+  @yield('content')
 </body>
 </html>
+
