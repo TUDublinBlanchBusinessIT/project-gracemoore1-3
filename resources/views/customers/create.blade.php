@@ -1,46 +1,51 @@
+{{-- resources/views/customers/create.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
-  <div class="w-full max-w-md bg-yellow-50 p-8 rounded-2xl shadow-lg mt-12">
-    
-    <h1 class="text-2xl font-bold text-center mb-6">Add New Customer</h1>
-
-    {{-- Validation errors --}}
-    <x-auth-validation-errors class="mb-4" :errors="$errors" />
-
-    <form method="POST" action="{{ route('customers.store') }}">
-      @csrf
-
-      <div class="mb-4">
-        <x-label for="name" :value="__('Name')" />
-        <x-input id="name"
-                 class="block mt-1 w-full"
-                 type="text"
-                 name="name"
-                 :value="old('name')"
-                 required
-        />
-      </div>
-
-      <div class="mb-4">
-        <x-label for="number" :value="__('Phone Number')" />
-        <x-input id="number"
-                 class="block mt-1 w-full"
-                 type="text"
-                 name="number"
-                 :value="old('number')"
-                 required
-        />
-      </div>
-
-      <div class="flex justify-center mt-6">
-        <x-button>
-          {{ __('Save Customer') }}
-        </x-button>
-      </div>
-    </form>
+  {{-- Title, centered --}}
+  <div class="text-center mb-6">
+    <h1 class="text-3xl font-bold">Add New Customer</h1>
   </div>
+
+  {{-- Form (no extra inner box) --}}
+  <form action="{{ route('customers.store') }}" method="POST" class="space-y-4">
+    @csrf
+
+    <div>
+      <label for="name" class="block text-sm font-medium mb-1">Name</label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        value="{{ old('name') }}"
+        required
+        class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-yellow-300"
+      >
+    </div>
+
+    <div>
+      <label for="number" class="block text-sm font-medium mb-1">Phone Number</label>
+      <input
+        type="text"
+        name="number"
+        id="number"
+        value="{{ old('number') }}"
+        required
+        class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-yellow-300"
+      >
+    </div>
+
+    <div class="flex justify-center">
+      <button
+        type="submit"
+        class="px-6 py-3 bg-yellow-700 text-white rounded-lg hover:bg-yellow-800"
+      >
+        Save Customer
+      </button>
+    </div>
+  </form>
 @endsection
+
 
 
 
