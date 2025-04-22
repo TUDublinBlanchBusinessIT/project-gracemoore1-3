@@ -21,19 +21,19 @@ class CustomerController extends Controller
         return view('customers.create');
     }
 
-    // POST /customers
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'                => 'required|string|max:255',
-            'number'              => 'required|string|max:50',
-            'most_recent_order_id'=> 'nullable|exists:orders,id',
-        ]);
+            'name'   => 'required|string|max:255',
+            'number' => 'required|string|max:25',
+    ]);
 
-        Customer::create($data);
+    Customer::create($data);
 
-        return redirect()->route('customers.index')
-                         ->with('success','Customer added.');
+        return redirect()
+            ->route('customers.index')
+            ->with('success', 'Customer added!');
     }
+
 }
 

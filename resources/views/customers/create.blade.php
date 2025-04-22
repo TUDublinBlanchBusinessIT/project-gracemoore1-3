@@ -1,31 +1,35 @@
-<x-app-layout>
-  <div class="max-w-md mx-auto sm:px-6 lg:px-8 py-6">
-    <h1 class="text-2xl font-bold mb-4">Add Customer</h1>
+@extends('layouts.app')
 
-    <form action="{{ route('customers.store') }}" method="POST" class="space-y-4 bg-white p-6 rounded-lg shadow">
+@section('content')
+  <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
+    <h2 class="text-2xl font-semibold mb-4">Add New Customer</h2>
+
+    <form action="{{ route('customers.store') }}" method="POST">
       @csrf
 
-      <div>
-        <x-label for="name" value="Name" />
-        <x-input id="name" name="name" class="mt-1 block w-full" required />
+      <div class="mb-4">
+        <x-label for="name" :value="__('Name')" />
+        <x-input
+          id="name"
+          name="name"
+          type="text"
+          class="block mt-1 w-full"
+          required
+        />
       </div>
 
-      <div>
-        <x-label for="number" value="Phone Number" />
-        <x-input id="number" name="number" class="mt-1 block w-full" required />
+      <div class="mb-4">
+        <x-label for="number" :value="__('Phone Number')" />
+        <x-input
+          id="number"
+          name="number"
+          type="text"
+          class="block mt-1 w-full"
+          required
+        />
       </div>
 
-      <div>
-        <x-label for="most_recent_order_id" value="Most Recent Order (ID)" />
-        <x-input id="most_recent_order_id" name="most_recent_order_id" 
-                 type="number" class="mt-1 block w-full" />
-      </div>
-
-      <div class="flex justify-end">
-        <x-button>
-          Save Customer
-        </x-button>
-      </div>
+      <x-button type="submit" class="w-full">Add Customer</x-button>
     </form>
   </div>
-</x-app-layout>
+@endsection
