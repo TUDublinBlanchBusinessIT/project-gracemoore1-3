@@ -10,7 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   {{-- When you’re ready, swap in your Vite build: --}}
-  {{-- @vite(['resources/css/app.css','resources/js/app.js']) --}}
+  {{-- @vite(['resources/css/app.css','resources/js/app.js'])--}}
 </head>
 <body class="bg-amber-50 min-h-screen flex items-center justify-center">
   <div class="w-full max-w-md bg-amber-100 p-8 rounded-xl shadow-lg">

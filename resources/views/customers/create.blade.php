@@ -1,31 +1,46 @@
-<x-app-layout>
-  <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Add Customer</h2>
-  </x-slot>
+@extends('layouts.app')
 
-  <div class="py-6">
-    <div class="max-w-md mx-auto sm:px-6 lg:px-8">
-      <div class="bg-white p-6 rounded-lg shadow">
-        <form action="{{ route('customers.store') }}" method="POST" class="space-y-4">
-          @csrf
+@section('content')
+  <div class="w-full max-w-md bg-yellow-50 p-8 rounded-2xl shadow-lg mt-12">
+    
+    <h1 class="text-2xl font-bold text-center mb-6">Add New Customer</h1>
 
-          <div>
-            <x-label for="name" value="Name" />
-            <x-input id="name" name="name" class="mt-1 block w-full" required />
-          </div>
+    {{-- Validation errors --}}
+    <x-auth-validation-errors class="mb-4" :errors="$errors" />
 
-          <div>
-            <x-label for="number" value="Phone Number" />
-            <x-input id="number" name="number" class="mt-1 block w-full" required />
-          </div>
+    <form method="POST" action="{{ route('customers.store') }}">
+      @csrf
 
-          <div>
-            <x-button>Save Customer</x-button>
-          </div>
-        </form>
+      <div class="mb-4">
+        <x-label for="name" :value="__('Name')" />
+        <x-input id="name"
+                 class="block mt-1 w-full"
+                 type="text"
+                 name="name"
+                 :value="old('name')"
+                 required
+        />
       </div>
-    </div>
+
+      <div class="mb-4">
+        <x-label for="number" :value="__('Phone Number')" />
+        <x-input id="number"
+                 class="block mt-1 w-full"
+                 type="text"
+                 name="number"
+                 :value="old('number')"
+                 required
+        />
+      </div>
+
+      <div class="flex justify-center mt-6">
+        <x-button>
+          {{ __('Save Customer') }}
+        </x-button>
+      </div>
+    </form>
   </div>
-</x-app-layout>
+@endsection
+
 
 
