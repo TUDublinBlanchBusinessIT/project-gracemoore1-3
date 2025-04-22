@@ -7,21 +7,17 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    // show the table of customers
     public function index()
     {
-        // eager‑load the “mostRecentOrder” relation
         $customers = Customer::with('mostRecentOrder')->get();
         return view('customers.index', compact('customers'));
     }
 
-    // show the “add customer” form
     public function create()
     {
         return view('customers.create');
     }
 
-    // handle the form POST and save a new customer
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -34,6 +30,35 @@ class CustomerController extends Controller
         return redirect()->route('customers.index')
                          ->with('success','Customer added.');
     }
+
+    // Show “edit” form
+    public function edit(Customer $customer)
+    {
+        return view('customers.edit', compact('customer'));
+    }
+
+    // Handle “edit” form submit
+    public function update(Request $request, Customer $customer)
+    {
+        $data = $request->validate([
+            'name'   => 'required|string|max:255',
+            'number' => 'required|string|max:50',
+        ]);
+
+        $customer->update($data);
+
+        return redirect()->route('customers.index')
+                         ->with('success','Customer updated.');
+    }
+
+    // Delete the customer
+    public function destroy(Customer $customer)
+    {
+        $customer->delete();
+        return redirect()->route('customers.index')
+                         ->with('success','Customer deleted.');
+    }
 }
+
 
 
