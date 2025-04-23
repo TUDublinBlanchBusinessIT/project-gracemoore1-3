@@ -58,16 +58,26 @@
       </table>
     </div>
 
-    {{-- total + next --}}
-    <div class="mt-6 flex justify-between items-center">
+    {{-- total + next + continue --}}
+    <div class="mt-6 flex justify-between items-start">
+      {{-- Total --}}
       <div class="text-xl font-semibold">
         Total: ${{ number_format($total,2) }}
       </div>
-      <a href="{{ route('orders.create') }}"
-         class="bg-yellow-700 text-white px-6 py-2 rounded hover:bg-yellow-800">
-        Next: Customer Info →
-      </a>
+
+      {{-- Next & Continue --}}
+      <div class="flex flex-col items-end space-y-2">
+        <a href="{{ route('orders.create') }}"
+           class="bg-yellow-700 text-white px-6 py-2 rounded hover:bg-yellow-800">
+          Next: Customer Info →
+        </a>
+        <a href="{{ route('items.index') }}"
+           class="bg-gray-200 text-gray-800 px-6 py-2 rounded hover:bg-gray-300">
+          ← Continue Browsing
+        </a>
+      </div>
     </div>
   @endif
 @endsection
+
 
