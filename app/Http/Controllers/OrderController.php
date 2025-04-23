@@ -2,84 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Customer;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Show the “enter customer info” form.
      */
     public function create()
     {
-        //
+        // grab every existing customer
+        $customers = Customer::all();
+
+        return view('orders.create', compact('customers'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Handle the form POST and actually save the order.
      */
     public function store(Request $request)
     {
-        //
+        // 1) validate: either they picked an existing customer_id,
+        // or they must supply name+number for a new one
+        $data = $request->validate([
+            'customer_id' => 'nullable|exists:customers,id',
+            'name'        => 'required_without:customer_id|string|max:255',
+            'number'      => 'required_without:customer_id|string|max:50',
+        ]);
+
+        // 2) if no existing customer was chosen, create it now
+        if (! $data['customer_id']) {
+            $new = Customer::create([
+                'name'   => $data['name'],
+                'number' => $data['number'],
+            ]);
+            $data['customer_id'] = $new->id;
+        }
+
+        // 3) now create the order record (customize as needed)
+        Order::create([
+            'customer_id' => $data['customer_id'],
+            // … add any other order fields here …
+        ]);
+
+        // 4) redirect back to browsing with a success flash
+        return redirect()
+            ->route('items.index')
+            ->with('success', 'Order placed!');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    // (other resource methods can stay empty or be removed if you aren't using them)
 }
+
