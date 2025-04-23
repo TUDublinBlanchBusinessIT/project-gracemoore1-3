@@ -27,14 +27,22 @@ class BakeryItemController extends Controller
             'image'       => 'required|image',
         ]);
 
-        $path = $request->file('image')
-                        ->storePubliclyAs('images', time().'.'.$request->image->extension(), 'public');
+            // 1) grab the uploaded file
+        $file = $request->file('image');
+
+    // 2) pull its original client‐side name
+        $originalName = $file->getClientOriginalName();
+
+    // 3) move it into public/images under that very name
+        $file->move(public_path('images'), $originalName);
+
+       
 
         BakeryItem::create([
             'name'        => $data['name'],
             'price'       => $data['price'],
             'description' => $data['description'] ?? null,
-            'image'       => basename($path),
+            'image'       => $originalName,
         ]);
 
         return redirect()->route('items.index')
