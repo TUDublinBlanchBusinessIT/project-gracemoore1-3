@@ -32,5 +32,21 @@ Route::middleware(['auth'])->group(function(){
     Route::resource('customers', CustomerController::class);
 });
 
+use App\Http\Controllers\BakeryItemController;
+use App\Http\Controllers\CartController;
+
+Route::middleware('auth')->group(function(){
+        // Bakery items full CRUD (we'll only expose index/create/store/show for now)
+
+    Route::resource('items', BakeryItemController::class)
+        ->only(['index','create','store','show']);
+
+
+    // Cart: add an item
+    Route::post('/cart/add/{item}', [CartController::class, 'store'])
+         ->name('cart.add');
+});
+
+
 
 

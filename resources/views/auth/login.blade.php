@@ -4,7 +4,7 @@
   <div class="mb-6 text-center">
     <img src="{{ asset('images/images.jpg') }}"
          alt="Bakery Logo"
-         class="w-20 h-20 mx-auto" />
+         class="w-50 h-50 mx-auto" />
   </div>
 
   {{-- Session status & Validation --}}
