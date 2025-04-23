@@ -7,14 +7,19 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    public function index()
+    {
+        $cart = session('cart', []);
+        $total = collect($cart)->sum(function($line){
+            return $line['price'] * $line['quantity'];
+        });
+        return view('cart.index', compact('cart','total'));
+    }
+
     public function store(Request $request, BakeryItem $item)
     {
         $qty = max(1, (int) $request->input('quantity', 1));
-
-        // pull existing cart from session (item_id => [qty,name,price,image])
         $cart = session()->get('cart', []);
-
-        // increment or set
         if (isset($cart[$item->id])) {
             $cart[$item->id]['quantity'] += $qty;
         } else {
@@ -25,9 +30,26 @@ class CartController extends Controller
                 'quantity' => $qty,
             ];
         }
-
         session(['cart' => $cart]);
-
         return back()->with('success', "{$item->name} ({$qty}) added to cart.");
+    }
+
+    public function update(Request $request, BakeryItem $item)
+    {
+        $qty = max(1, (int) $request->input('quantity', 1));
+        $cart = session('cart', []);
+        if (isset($cart[$item->id])) {
+            $cart[$item->id]['quantity'] = $qty;
+            session(['cart' => $cart]);
+        }
+        return back()->with('success','Quantity updated.');
+    }
+
+    public function destroy(BakeryItem $item)
+    {
+        $cart = session('cart', []);
+        unset($cart[$item->id]);
+        session(['cart' => $cart]);
+        return back()->with('success','Item removed.');
     }
 }

@@ -2,7 +2,7 @@
 
 @section('content')
   <div class="mb-6 text-center">
-    <img src="{{ asset('images/images.jpg') }}"
+    <img src="{{ asset('images/images.png') }}"
          alt="Bakery Logo"
          class="w-50 h-50 mx-auto" />
   </div>
