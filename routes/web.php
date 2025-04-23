@@ -41,10 +41,26 @@ Route::middleware('auth')->group(function(){
     Route::resource('items', BakeryItemController::class)
         ->only(['index','create','store','show']);
 
-
+    // Show the cart contents
+    Route::get('/cart', [CartController::class, 'index'])
+        ->name('cart.index');
+        
     // Cart: add an item
     Route::post('/cart/add/{item}', [CartController::class, 'store'])
          ->name('cart.add');
+
+
+    // … your existing /items and /cart routes …
+
+// CRUD routes for orders:
+    Route::resource('orders', \App\Http\Controllers\OrderController::class);
+
+// CRUD routes for employees:
+    Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
+
+// CRUD routes for completed orders:
+    Route::resource('completed_orders', \App\Http\Controllers\CompletedOrderController::class);
+     
 });
 
 
