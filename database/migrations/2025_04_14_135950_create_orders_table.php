@@ -19,8 +19,10 @@ class CreateOrdersTable extends Migration
             $table->id();  // Order ID (Primary Key)
             $table->unsignedBigInteger('customer_id');
             $table->dateTime('pickup_datetime');
-            $table->decimal('total_price', 8, 2);
-            $table->text('list_of_items');
+                // give total_price a default of zero
+            $table->decimal('total_price', 8, 2)->default(0);
+    // allow list_of_items to be null if you’re not ready to store it yet
+            $table->text('list_of_items')->nullable();
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->timestamps();
 

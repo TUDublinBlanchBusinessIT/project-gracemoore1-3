@@ -58,6 +58,17 @@
              class="mt-1 block w-full border-gray-300 rounded px-3 py-2">
     </div>
 
+    <div class="mb-4">
+      <label class="font-medium">Pick-up Date & Time</label>
+      <input
+            type="datetime-local"
+            name="pickup_datetime"
+            value="{{ old('pickup_datetime') }}"
+            class="mt-1 block w-full border rounded px-3 py-2"
+            required
+        >
+    </div>
+
     {{-- Buttons --}}
     <div class="flex justify-between items-center">
       <a href="{{ route('items.index') }}"

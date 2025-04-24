@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -28,8 +29,9 @@ class OrderController extends Controller
         // or they must supply name+number for a new one
         $data = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
-            'name'        => 'required_without:customer_id|string|max:255',
-            'number'      => 'required_without:customer_id|string|max:50',
+            'name'        => 'nullable|string|required_without:customer_id|max:255',
+            'number'      => 'nullable|string|required_without:customer_id|max:50',
+            'pickup_datetime' => 'required|date', 
         ]);
 
         // 2) if no existing customer was chosen, create it now
@@ -44,6 +46,7 @@ class OrderController extends Controller
         // 3) now create the order record (customize as needed)
         Order::create([
             'customer_id' => $data['customer_id'],
+            'pickup_datetime' => $data['pickup_datetime'],
             // … add any other order fields here …
         ]);
 

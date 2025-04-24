@@ -13,10 +13,10 @@
       class="w-full h-64 object-cover rounded-lg mb-6"
     >
 
-    <p class="mb-6 text-gray-700">
-      {{-- if you’ve added a description column: --}}
-      {{ $item->description ?? 'No description available.' }}
+    <p class="mb-4">
+    {{ $item->description ?? 'No description available.' }}
     </p>
+
 
     <form action="{{ route('cart.add', $item) }}" method="POST" class="space-y-4">
       @csrf
