@@ -2,39 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    /**
-     * Show the “enter customer info” form.
-     */
+    // Show the form to create a new order
     public function create()
     {
-        // grab every existing customer
         $customers = Customer::all();
-
         return view('orders.create', compact('customers'));
     }
 
-    /**
-     * Handle the form POST and actually save the order.
-     */
+    // Handle the POST from that form and actually save the order
     public function store(Request $request)
     {
-        // 1) validate: either they picked an existing customer_id,
-        // or they must supply name+number for a new one
         $data = $request->validate([
-            'customer_id' => 'nullable|exists:customers,id',
-            'name'        => 'nullable|string|required_without:customer_id|max:255',
-            'number'      => 'nullable|string|required_without:customer_id|max:50',
-            'pickup_datetime' => 'required|date', 
+            'customer_id'     => 'nullable|exists:customers,id',
+            'name'            => 'required_without:customer_id|string|max:255',
+            'number'          => 'required_without:customer_id|string|max:50',
+            'pickup_datetime' => 'required|date',
         ]);
 
-        // 2) if no existing customer was chosen, create it now
+        // If they didn’t pick an existing customer, make a new one
         if (! $data['customer_id']) {
             $new = Customer::create([
                 'name'   => $data['name'],
@@ -43,19 +35,29 @@ class OrderController extends Controller
             $data['customer_id'] = $new->id;
         }
 
-        // 3) now create the order record (customize as needed)
+        // Pull cart from session, build item list + total
+        $cart  = session()->get('cart', []);
+        $lines = [];
+        $total = 0;
+        foreach ($cart as $item) {
+            $lines[] = "{$item['quantity']} {$item['name']}";
+            $total += $item['price'] * $item['quantity'];
+        }
+
+        // Create the order
         Order::create([
-            'customer_id' => $data['customer_id'],
+            'customer_id'     => $data['customer_id'],
+            'user_id'         => Auth::id(),              // employee is the logged‐in user
             'pickup_datetime' => $data['pickup_datetime'],
-            // … add any other order fields here …
+            'total_price'     => $total,
+            'list_of_items'   => implode(' and ', $lines),
         ]);
 
-        // 4) redirect back to browsing with a success flash
+        // Empty the cart
+        session()->forget('cart');
+
         return redirect()
             ->route('items.index')
-            ->with('success', 'Order placed!');
+            ->with('success','Order placed!');
     }
-
-    // (other resource methods can stay empty or be removed if you aren't using them)
 }
-

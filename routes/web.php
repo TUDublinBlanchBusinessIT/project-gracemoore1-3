@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrderController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +60,8 @@ Route::middleware('auth')->group(function(){
     // … your existing /items and /cart routes …
 
     // CRUD routes for orders:
-    Route::resource('orders', \App\Http\Controllers\OrderController::class);
+    Route::resource('orders', App\Http\Controllers\OrderController::class)
+        ->only(['create','store','index','show']);
 
 // CRUD routes for employees:
     Route::resource('employees', \App\Http\Controllers\EmployeeController::class);

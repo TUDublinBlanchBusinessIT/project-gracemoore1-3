@@ -17,13 +17,12 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();  // Order ID (Primary Key)
-            $table->unsignedBigInteger('customer_id');
+            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->dateTime('pickup_datetime');
-                // give total_price a default of zero
-            $table->decimal('total_price', 8, 2)->default(0);
+            $table->decimal('total_price', 8, 2);
     // allow list_of_items to be null if you’re not ready to store it yet
-            $table->text('list_of_items')->nullable();
-            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->text('list_of_items');
+            $table->foreignId('employee_id')->nullable()->constrained('users');
             $table->timestamps();
 
             // Assume customer's foreign key is defined in the customers migration.

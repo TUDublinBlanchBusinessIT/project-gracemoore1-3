@@ -19,8 +19,11 @@ class Customer extends Model
      */
     public function mostRecentOrder()
     {
-        return $this->belongsTo(Order::class, 'most_recent_order_id');
+        return $this->hasOne(\App\Models\Order::class)
+                    ->latestOfMany();
     }
+
+    
 }
 
 
