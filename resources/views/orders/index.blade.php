@@ -36,9 +36,7 @@
             <tr>
               <td class="px-6 py-4">{{ $order->id }}</td>
               <td class="px-6 py-4">{{ $order->customer->name }}</td>
-              <td class="px-6 py-4">
-                {{ optional($order->employee)->name ?? '—' }}
-              </td>
+              <td>{{ $order->user ? $order->user->name : '—' }}</td>
               <td class="px-6 py-4">
                 {{ $order->pickup_datetime->format('d/m/Y H:i') }}
               </td>

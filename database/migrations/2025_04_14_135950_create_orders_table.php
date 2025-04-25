@@ -22,7 +22,10 @@ class CreateOrdersTable extends Migration
             $table->decimal('total_price', 8, 2);
     // allow list_of_items to be null if you’re not ready to store it yet
             $table->text('list_of_items');
-            $table->foreignId('employee_id')->nullable()->constrained('users');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')
+                  ->references('id')->on('users')
+                  ->onDelete('set null'); // instead of employee_id
             $table->timestamps();
 
             // Assume customer's foreign key is defined in the customers migration.

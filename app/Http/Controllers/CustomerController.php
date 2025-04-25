@@ -9,7 +9,10 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = Customer::with('mostRecentOrder')->get();
+        $customers = Customer::with(['orders' => function($q){
+            $q->latest('created_at')->limit(1);
+        }])->get();
+
         return view('customers.index', compact('customers'));
     }
 
@@ -17,6 +20,15 @@ class CustomerController extends Controller
     {
         return view('customers.create');
     }
+
+    public function show(Customer $customer)
+    {
+    // eager-load the relation on a single model:
+        $customer->load('mostRecentOrder');
+
+        return view('customers.show', compact('customer'));
+    }
+
 
     public function store(Request $request)
     {
@@ -26,6 +38,10 @@ class CustomerController extends Controller
         ]);
 
         Customer::create($data);
+
+        $order->customer->update([
+            'most_recent_order_id' => $order->id
+        ]);        
 
         return redirect()->route('customers.index')
                          ->with('success','Customer added.');
@@ -58,6 +74,8 @@ class CustomerController extends Controller
         return redirect()->route('customers.index')
                          ->with('success','Customer deleted.');
     }
+
+
 }
 
 

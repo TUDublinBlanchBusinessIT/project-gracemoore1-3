@@ -3,27 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Order;
 
 class Customer extends Model
 {
-    // allow mass assignment on name, number, and most_recent_order_id
     protected $fillable = [
         'name',
         'number',
         'most_recent_order_id',
     ];
 
-    /**
-     * The “most recent order” relationship.
-     * Assumes you have an Order model in App\Models\Order.
-     */
-    public function mostRecentOrder()
+    public function orders()
     {
-        return $this->hasOne(\App\Models\Order::class)
-                    ->latestOfMany();
+        return $this->hasMany(Order::class);
     }
 
-    
+
+   
 }
+
 
 

@@ -6,58 +6,88 @@ use App\Models\Order;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class OrderController extends Controller
 {
-    // Show the form to create a new order
+    /** Show the “Customer Information” form */
     public function create()
     {
+        // load all existing customers into a dropdown
         $customers = Customer::all();
-        return view('orders.create', compact('customers'));
+
+        // default pickup to tomorrow at 17:00
+        $pickupDateTime = now()->addDay()->format('Y-m-d\TH:i');
+
+        return view('orders.create', compact('customers','pickupDateTime'));
     }
 
-    // Handle the POST from that form and actually save the order
+    public function index()
+    {
+        $orders = Order::with(['customer','user'])
+                    ->orderBy('created_at','desc')
+                    ->get();
+
+        return view('orders.index', compact('orders'));
+    }
+    /** Handle the form POST, save the order, clear the cart */
     public function store(Request $request)
     {
+        // 1. Validation
         $data = $request->validate([
             'customer_id'     => 'nullable|exists:customers,id',
-            'name'            => 'required_without:customer_id|string|max:255',
-            'number'          => 'required_without:customer_id|string|max:50',
+            'name'            => 'nullable|required_without:customer_id|string|max:255',
+            'number'          => 'nullable|required_without:customer_id|string|max:50',
             'pickup_datetime' => 'required|date',
-        ]);
+        ]);        
+ 
 
-        // If they didn’t pick an existing customer, make a new one
-        if (! $data['customer_id']) {
-            $new = Customer::create([
+        // 2. If they didn’t pick an existing customer, create one
+        if ( ! $data['customer_id'] ) {
+            $c = Customer::create([
                 'name'   => $data['name'],
                 'number' => $data['number'],
             ]);
-            $data['customer_id'] = $new->id;
+            $data['customer_id'] = $c->id;
         }
 
-        // Pull cart from session, build item list + total
-        $cart  = session()->get('cart', []);
-        $lines = [];
+        $data['user_id'] = auth()->id();  // instead of employee_id
+
+
+        // 3. Build the order’s total & list_of_items from the session cart
+        $cart = Session::get('cart', []);
         $total = 0;
-        foreach ($cart as $item) {
-            $lines[] = "{$item['quantity']} {$item['name']}";
-            $total += $item['price'] * $item['quantity'];
+        $pieces = [];
+
+        foreach ($cart as $line) {
+            $qty   = $line['quantity'];
+            $price = $line['price'];
+            $name  = $line['name'];
+
+            $total += $qty * $price;
+            $pieces[] = $qty . ' ' . $name . ($qty>1 ? 's' : '');
         }
 
-        // Create the order
-        Order::create([
+        // 4. Persist the order
+        $order = Order::create([
             'customer_id'     => $data['customer_id'],
-            'user_id'         => Auth::id(),              // employee is the logged‐in user
             'pickup_datetime' => $data['pickup_datetime'],
             'total_price'     => $total,
-            'list_of_items'   => implode(' and ', $lines),
+            'list_of_items'   => implode(' and ', $pieces),
+            'user_id'         => Auth()->id(),      // who took it
         ]);
 
-        // Empty the cart
-        session()->forget('cart');
+        $customer = Customer::find($order->customer_id)
+                ->update(['most_recent_order_id' => $order->id]);
 
+
+        // 5. Empty the cart
+        Session::forget('cart');
+
+        // 6. Redirect back to the bakery with a flash
         return redirect()
             ->route('items.index')
-            ->with('success','Order placed!');
+            ->with('success',"Order #{$order->id} placed!");
     }
 }
+

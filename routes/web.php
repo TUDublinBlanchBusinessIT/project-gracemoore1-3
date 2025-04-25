@@ -61,10 +61,11 @@ Route::middleware('auth')->group(function(){
 
     // CRUD routes for orders:
     Route::resource('orders', App\Http\Controllers\OrderController::class)
-        ->only(['create','store','index','show']);
+        ->only(['create','store','index']);
 
-// CRUD routes for employees:
+    // CRUD routes for employees:
     Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
+
 
 // CRUD routes for completed orders:
     Route::resource('completed_orders', \App\Http\Controllers\CompletedOrderController::class);
