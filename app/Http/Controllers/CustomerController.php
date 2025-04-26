@@ -9,7 +9,7 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = Customer::with('latestOrder')->paginate(10); // or get() if not paginating
+        $customers = Customer::with('latestOrder')->get();
         return view('customers.index', compact('customers'));
     }
 
@@ -29,21 +29,17 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name'   => 'required|string|max:255',
-            'number' => 'required|string|max:50',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'number' => 'nullable|string|max:20',
+        // other validation rules
         ]);
 
-        Customer::create($data);
-
-        $order->customer->update([
-            'most_recent_order_id' => $order->id
-        ]);        
+        Customer::create($validated);
 
         return redirect()->route('customers.index')
-                         ->with('success','Customer added.');
+            ->with('success', 'Customer created successfully');
     }
-
     // Show “edit” form
     public function edit(Customer $customer)
     {
