@@ -106,5 +106,12 @@ class OrderController extends Controller
                         ->with('success', 'Order updated successfully');
     }
 
+    public function destroy(Order $order)
+    {
+        $order->delete();
+
+    // Optionally, you can return a response for the AJAX request
+        return response()->json(['success' => 'Order deleted successfully']);
+    }
 
 }
