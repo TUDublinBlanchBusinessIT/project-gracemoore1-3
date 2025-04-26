@@ -105,13 +105,16 @@ class OrderController extends Controller
         return redirect()->route('orders.show', $order)
                         ->with('success', 'Order updated successfully');
     }
-
     public function destroy(Order $order)
     {
         $order->delete();
-
-    // Optionally, you can return a response for the AJAX request
-        return response()->json(['success' => 'Order deleted successfully']);
+    
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+    
+        return redirect()->route('orders.index')
+                        ->with('success', 'Order deleted successfully');
     }
 
 }
