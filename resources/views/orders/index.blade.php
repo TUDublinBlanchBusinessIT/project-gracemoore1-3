@@ -24,7 +24,7 @@
           <tr class="text-left">
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">#</th>
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Customer</th>
-            <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">User</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Employee</th>
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Pick-up</th>
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Total</th>
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Items</th>

@@ -1,58 +1,72 @@
 @extends('layouts.app')
 
 @section('content')
-  <div class="text-center mb-8">
-    <h1 class="text-3xl font-bold">Customers</h1>
-  </div>
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Customers</h1>
+        <a href="{{ route('customers.create') }}" 
+           class="bg-yellow-700 text-white px-4 py-2 rounded hover:bg-yellow-800 transition-colors">
+            Add New Customer
+        </a>
+    </div>
 
-  <div class="overflow-x-auto">
-    <table class="min-w-full bg-white divide-y divide-gray-200 rounded-lg shadow">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Most Recent Order #</th>
-          <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-200">
-        @forelse($customers as $c)
-          <tr>
-            <td class="px-6 py-4">{{ $c->name }}</td>
-            <td class="px-6 py-4">{{ $c->number }}</td>
-            <td class="px-6 py-4">{{ optional($c->mostRecentOrder)->id ?? '—' }}</td>
-            <td class="px-6 py-4 text-center space-x-2">
-              <!-- Edit -->
-              <a href="{{ route('customers.edit', $c) }}"
-                 class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
-                Edit
-              </a>
-              <!-- Delete -->
-              <form action="{{ route('customers.destroy', $c) }}" method="POST" class="inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit"
-                        onclick="return confirm('Delete this customer?')"
-                        class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
-                  Delete
-                </button>
-              </form>
-            </td>
-          </tr>
-        @empty
-          <tr>
-            <td colspan="4" class="px-6 py-4 text-center text-gray-500">No customers yet.</td>
-          </tr>
-        @endforelse
-      </tbody>
-    </table>
-  </div>
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 p-3 rounded mb-6">
+            {{ session('success') }}
+        </div>
+    @endif
 
-  <div class="mt-6 flex justify-center">
-    <a href="{{ route('customers.create') }}"
-       class="px-6 py-3 bg-yellow-700 text-white rounded-lg hover:bg-yellow-800">
-      Add New Customer
-    </a>
-  </div>
+    <div class="overflow-x-auto bg-white shadow rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Most Recent Order</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @foreach($customers as $customer)
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">{{ $customer->name }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">
+                            {{ $customer->phone ?? 'Not provided' }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if($customer->latestOrder)
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                #{{ $customer->latestOrder->id }}
+                            </span>
+                            <span class="text-sm text-gray-500 ml-1">
+                                ({{ \Carbon\Carbon::parse($customer->latestOrder->created_at)->format('d/m/Y') }})
+                            </span>
+                        @else
+                            <span class="text-sm text-gray-400">No orders</span>
+                        @endif
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <a href="{{ route('customers.edit', $customer) }}" 
+                           class="text-yellow-600 hover:text-yellow-900 hover:underline">Edit</a>
+                        <form action="{{ route('customers.destroy', $customer) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" 
+                                    class="text-red-600 hover:text-red-900 hover:underline"
+                                    onclick="return confirm('Are you sure you want to delete this customer?')">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @endsection
 

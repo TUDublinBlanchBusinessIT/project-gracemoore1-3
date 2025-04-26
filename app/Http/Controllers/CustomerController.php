@@ -9,10 +9,7 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = Customer::with(['orders' => function($q){
-            $q->latest('created_at')->limit(1);
-        }])->get();
-
+        $customers = Customer::with('latestOrder')->paginate(10); // or get() if not paginating
         return view('customers.index', compact('customers'));
     }
 

@@ -13,9 +13,9 @@ class Customer extends Model
         'most_recent_order_id',
     ];
 
-    public function orders()
+    public function latestOrder()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasOne(Order::class)->latestOfMany();
     }
 
 
