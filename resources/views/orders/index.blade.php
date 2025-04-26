@@ -24,7 +24,7 @@
           <tr class="text-left">
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">#</th>
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Customer</th>
-            <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Employee</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">User</th>
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Pick-up</th>
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Total</th>
             <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Items</th>
@@ -35,18 +35,17 @@
           @foreach($orders as $order)
             <tr>
               <td class="px-6 py-4">{{ $order->id }}</td>
-              <td class="px-6 py-4">{{ $order->customer->name }}</td>
-              <td>{{ $order->user ? $order->user->name : '—' }}</td>
+              <td class="px-6 py-4">{{ $order->customer->name ?? 'N/A' }}</td>
+              <td class="px-6 py-4">{{ $order->user->name ?? 'N/A' }}</td>
               <td class="px-6 py-4">
-                {{ $order->pickup_datetime->format('d/m/Y H:i') }}
+                {{ \Carbon\Carbon::parse($order->pickup_datetime)->format('d/m/Y H:i') }}
               </td>
-              <td class="px-6 py-4">${{ number_format($order->total_price,2) }}</td>
-              <td class="px-6 py-4">{{ $order->list_of_items }}</td>
+              <td class="px-6 py-4">${{ number_format($order->total_price, 2) }}</td>
+              <td class="px-6 py-4">{{ Str::limit($order->list_of_items, 30) }}</td>
               <td class="px-6 py-4 space-x-2">
-                <!-- If you add show/edit later: -->
-                <a href="{{ route('orders.show',$order) }}"
+                <a href="{{ route('orders.show', $order) }}"
                    class="text-blue-600 hover:underline">View</a>
-                <a href="{{ route('orders.edit',$order) }}"
+                <a href="{{ route('orders.edit', $order) }}"
                    class="text-yellow-600 hover:underline">Edit</a>
               </td>
             </tr>

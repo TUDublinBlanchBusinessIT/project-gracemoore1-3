@@ -16,11 +16,10 @@ return new class extends Migration
             $table->dropColumn('user_id');
 
             // 3) Re-add it pointing at users.id instead
-            $table->unsignedBigInteger('user_id')->nullable()->after('list_of_items');
             $table->foreign('user_id')
                   ->references('id')
                   ->on('users')
-                  ->nullOnDelete();
+                  ->OnDelete('set null');
         });
     }
 
@@ -29,14 +28,10 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             // reverse: drop the new FK+column
             $table->dropForeign(['user_id']);
-            $table->dropColumn('user_id');
-
-            // (optional) put back the old one against employees if you ever need it
-            $table->unsignedBigInteger('user_id')->nullable()->after('list_of_items');
             $table->foreign('user_id')
                   ->references('id')
                   ->on('employees')
-                  ->nullOnDelete();
+                  ->OnDelete('set null');
         });
     }
 };

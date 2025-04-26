@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             // 1) Drop the old employee_id foreign key & column
-            if (Schema::hasColumn('orders', 'employee_id')) {
-                $table->dropForeign(['employee_id']);
-                $table->dropColumn('employee_id');
+            if (Schema::hasColumn('orders', 'user_id')) {
+                $table->dropForeign(['user_id']);
+                $table->dropColumn('user_id');
             }
 
             // 2) Add the new user_id column
@@ -43,14 +43,14 @@ return new class extends Migration
 
         Schema::table('orders', function (Blueprint $table) {
             // drop the new FK & column
-            $table->dropForeign(['user_id']);
-            $table->dropColumn('user_id');
+            $table->dropForeign(['employee_id']);
+            $table->dropColumn('employee_id');
 
             // restore the old employee_id
-            $table->unsignedBigInteger('employee_id')->nullable()->after('total_price');
-            $table->foreign('employee_id')
+            $table->unsignedBigInteger('user_id')->nullable()->after('total_price');
+            $table->foreign('user_id')
                   ->references('id')
-                  ->on('employees')
+                  ->on('users')
                   ->onDelete('set null');
         });
     }
