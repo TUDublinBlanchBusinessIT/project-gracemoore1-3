@@ -71,6 +71,7 @@
   <main class="flex-grow container mx-auto px-6 py-8 max-w-6xl">
     @yield('content')
   </main>
+   @stack('scripts')  
 </body>
 </html>
 

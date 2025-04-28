@@ -60,13 +60,15 @@ Route::middleware('auth')->group(function(){
     // … your existing /items and /cart routes …
 
     // CRUD routes for orders:
-    Route::resource('orders', App\Http\Controllers\OrderController::class)
-        ->only(['create','store','show','destroy','index']);
+    Route::resource('orders', OrderController::class)->only([
+        'create', 'store', 'show', 'destroy', 'index', 'edit', 'update'
+    ]);
+
 
     // CRUD routes for employees:
     Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
 
-    Route::resource('orders', OrderController::class);
+
 
 // CRUD routes for completed orders:
     Route::resource('completed_orders', \App\Http\Controllers\CompletedOrderController::class);

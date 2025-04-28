@@ -105,16 +105,22 @@ class OrderController extends Controller
         return redirect()->route('orders.show', $order)
                         ->with('success', 'Order updated successfully');
     }
+
     public function destroy(Order $order)
     {
-        $order->delete();
-    
-        if (request()->wantsJson()) {
-            return response()->json(['success' => true]);
+        \Log::info("Delete attempt for order: " . $order->id);
+        try {
+            $order->delete();
+        
+            return request()->wantsJson() 
+                ? response()->json(['success' => true])
+                : redirect()->route('orders.index')->with('success', 'Order deleted successfully');
+            
+        } catch (\Exception $e) {
+            return request()->wantsJson()
+                ? response()->json(['error' => $e->getMessage()], 500)
+                : redirect()->route('orders.index')->with('error', 'Failed to delete order');
         }
-    
-        return redirect()->route('orders.index')
-                        ->with('success', 'Order deleted successfully');
     }
 
 }

@@ -4,9 +4,9 @@
 <div class="container mx-auto px-4 py-8">
     <div class="flex flex-col mb-6">
         <h1 class="text-3xl font-bold mb-4">Orders</h1>
-        
+
         <div class="flex justify-end">
-            <button id="delete-orders-btn" 
+            <button id="delete-orders-btn"
                     class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors mb-4">
                 Delete Orders
             </button>
@@ -25,19 +25,19 @@
         <div class="overflow-x-auto bg-white shadow rounded-lg">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
-                    <tr class="text-left">
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">#</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Customer</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Employee</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Pick-up</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Total</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Items</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase delete-column hidden">Delete</th>
-                    </tr>
+                <tr class="text-left">
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">#</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Customer</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Employee</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Pick-up</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Total</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Items</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase delete-column hidden">Delete</th>
+                </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($orders as $order)
+                @foreach($orders as $order)
                     <tr data-order-id="{{ $order->id }}" class="hover:bg-gray-50">
                         <td class="px-6 py-4">{{ $order->id }}</td>
                         <td class="px-6 py-4">{{ $order->customer->name ?? 'N/A' }}</td>
@@ -62,7 +62,7 @@
                             </button>
                         </td>
                     </tr>
-                    @endforeach
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -74,56 +74,65 @@
     document.addEventListener('DOMContentLoaded', function() {
         const deleteBtn = document.getElementById('delete-orders-btn');
         const deleteColumns = document.querySelectorAll('.delete-column');
-        const deleteButtons = document.querySelectorAll('.delete-order-btn');
-        
+
         // Toggle delete mode
         deleteBtn.addEventListener('click', function() {
             const isDeleteMode = deleteColumns[0].classList.contains('hidden');
-            
+
             // Toggle visibility
             deleteColumns.forEach(col => {
                 col.classList.toggle('hidden');
             });
-            
-            // Update button text
+
+            // Update button text and color
             deleteBtn.textContent = isDeleteMode ? 'Cancel Delete' : 'Delete Orders';
             deleteBtn.classList.toggle('bg-red-500');
             deleteBtn.classList.toggle('bg-gray-500');
         });
-        
+
         // Handle delete actions
-        document.querySelector('tbody').addEventListener('click', function(e) {
-            if (e.target.closest('.delete-order-btn')) {
-                const button = e.target.closest('.delete-order-btn');
-                const orderId = button.dataset.orderId;
-                const row = button.closest('tr');
-                
-                if (confirm('Are you sure you want to delete this order?')) {
-                    fetch(`/orders/${orderId}`, {
+        document.querySelector('tbody').addEventListener('click', async function(e) {
+            const deleteOrderButton = e.target.closest('.delete-order-btn'); // Changed selector here
+            if (!deleteOrderButton) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const orderId = deleteOrderButton.dataset.orderId;
+            const row = deleteOrderButton.closest('tr');
+
+            if (confirm('Are you sure you want to delete this order?')) {
+                try {
+                    const response = await fetch(`/orders/${orderId}`, {
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            row.remove();
-                            // Show success message
-                            const message = document.createElement('div');
-                            message.className = 'bg-green-100 text-green-800 p-3 rounded mb-6 mt-4';
-                            message.textContent = 'Order deleted successfully';
-                            document.querySelector('.container').prepend(message);
-                            setTimeout(() => message.remove(), 3000);
-                        } else {
-                            alert('Failed to delete order');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error deleting order');
+                        },
+                        credentials: 'include' // Important for sessions
                     });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Failed to delete order');
+                    }
+
+                    // Remove the row from the table
+                    row.remove();
+
+                    // Show success message
+                    const message = document.createElement('div');
+                    message.className = 'bg-green-100 text-green-800 p-3 rounded mb-6';
+                    message.textContent = 'Order deleted successfully';
+                    document.querySelector('.container').insertBefore(message, document.querySelector('.container').firstChild);
+
+                    setTimeout(() => message.remove(), 3000);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(error.message || 'Error deleting order');
                 }
             }
         });
