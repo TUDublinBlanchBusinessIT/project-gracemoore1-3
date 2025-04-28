@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BakeryItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BakeryItemController extends Controller
 {
@@ -21,32 +22,21 @@ class BakeryItemController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'        => 'required|string',
-            'price'       => 'required|numeric',
+            'name' => 'required|string',
+            'price' => 'required|numeric',
             'description' => 'nullable|string',
-            'image'       => 'required|image',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-            // 1) grab the uploaded file
-        $file = $request->file('image');
+        $imagePath = $request->file('image')->store('public/images');
+        $originalName = $request->file('image')->getClientOriginalName(); // Get original name
+        $data['image'] = $originalName; // Store original name in DB
+        $data['image_path'] = str_replace('public/', '', $imagePath);
 
-    // 2) pull its original client‐side name
-        $originalName = $file->getClientOriginalName();
-
-    // 3) move it into public/images under that very name
-        $file->move(public_path('images'), $originalName);
-
-       
-
-        BakeryItem::create([
-            'name'        => $data['name'],
-            'price'       => $data['price'],
-            'description' => $data['description'] ?? null,
-            'image'       => $originalName,
-        ]);
+        BakeryItem::create($data);
 
         return redirect()->route('items.index')
-                         ->with('success', 'Item added.');
+            ->with('success', 'Item added.');
     }
 
     public function show(BakeryItem $item)
@@ -54,7 +44,46 @@ class BakeryItemController extends Controller
         return view('items.show', compact('item'));
     }
 
-    // (you can add edit/update/destroy later)
+    public function edit(BakeryItem $item)
+    {
+        return view('items.edit', compact('item'));
+    }
+
+    public function update(Request $request, BakeryItem $item)
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+            'price' => 'required|numeric',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            // Delete the old image
+            Storage::delete('public/' . $item->image_path);
+            $imagePath = $request->file('image')->store('public/images');
+             $originalName = $request->file('image')->getClientOriginalName();
+            $data['image'] = $originalName;
+            $data['image_path'] = str_replace('public/', '', $imagePath);
+        }
+
+
+
+        $item->update($data);
+
+        return redirect()->route('items.index')
+            ->with('success', 'Item updated.');
+    }
+
+    public function destroy(BakeryItem $item)
+    {
+        // Delete the image file
+        Storage::delete('public/' . $item->image_path);
+        $item->delete();
+        return redirect()->route('items.index')
+            ->with('success', 'Item deleted.');
+    }
 }
+
 
 

@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\BakeryItemController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CustomerController; // Corrected inclusion
+use App\Http\Controllers\CompletedOrderController; // Corrected inclusion
 
 
 /*
@@ -26,23 +30,17 @@ Route::get('/dashboard', function () {
 
 require __DIR__.'/auth.php';
 
-use App\Http\Controllers\CustomerController;
+
 
 Route::middleware(['auth'])->group(function(){
-    Route::get('/customers',        [CustomerController::class,'index'])->name('customers.index');
+    Route::get('/customers',         [CustomerController::class,'index'])->name('customers.index');
     Route::get('/customers/create', [CustomerController::class,'create'])->name('customers.create');
-    Route::post('/customers',       [CustomerController::class,'store'])->name('customers.store');
+    Route::post('/customers',         [CustomerController::class,'store'])->name('customers.store');
     Route::resource('customers', CustomerController::class);
-});
 
-use App\Http\Controllers\BakeryItemController;
-use App\Http\Controllers\CartController;
 
-Route::middleware('auth')->group(function(){
-        // Bakery items full CRUD (we'll only expose index/create/store/show for now)
-
-    Route::resource('items', BakeryItemController::class)
-        ->only(['index','create','store','show']);
+    // Bakery items full CRUD
+    Route::resource('items', BakeryItemController::class);
 
     // Show the cart contents
     Route::get('/cart', [CartController::class, 'index'])
@@ -50,7 +48,7 @@ Route::middleware('auth')->group(function(){
 
     // Cart: add an item
     Route::post('/cart/add/{item}', [CartController::class, 'store'])
-         ->name('cart.add');
+        ->name('cart.add');
 
 
     // remove from cart
@@ -71,16 +69,11 @@ Route::middleware('auth')->group(function(){
 
     Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
     Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create'); // For the form
-    Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');   // To store the new employee
+    Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');     // To store the new employee
     Route::get('/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit'); //edit form
     Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
 
-
-
-// CRUD routes for completed orders:
-    Route::resource('completed_orders', \App\Http\Controllers\CompletedOrderController::class);
+    // CRUD routes for completed orders:
+    Route::resource('completed_orders',  CompletedOrderController::class);
 });
-
-
-
 
