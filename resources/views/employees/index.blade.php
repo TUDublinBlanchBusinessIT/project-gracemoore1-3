@@ -4,7 +4,7 @@
     <div class="container mx-auto py-8">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold">Employees</h1>
-            <a href="{{ route('employees.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            <a href="{{ route('employees.create') }}" class="bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded">
                 Register New Employee
             </a>
         </div>
