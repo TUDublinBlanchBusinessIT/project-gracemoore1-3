@@ -70,12 +70,15 @@ Route::middleware('auth')->group(function(){
     Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
 
     Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create'); // For the form
+    Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');   // To store the new employee
+    Route::get('/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit'); //edit form
+    Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
 
 
 
 // CRUD routes for completed orders:
     Route::resource('completed_orders', \App\Http\Controllers\CompletedOrderController::class);
-     
 });
 
 
