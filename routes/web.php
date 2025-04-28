@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\EmployeeController;
 
 
 /*
@@ -67,6 +68,8 @@ Route::middleware('auth')->group(function(){
 
     // CRUD routes for employees:
     Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
+
+    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
 
 
 
