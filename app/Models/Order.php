@@ -16,6 +16,7 @@ class Order extends Model
         'pickup_datetime',
         'total_price',
         'list_of_items',
+        'special_requests',
     ];
   
 

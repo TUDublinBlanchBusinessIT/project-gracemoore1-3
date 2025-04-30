@@ -55,7 +55,7 @@ class OrderController extends Controller
         $pieces = [];
         $allSpecialRequests = [];
 
-        foreach ($cart as $line) {
+        foreach ($cart as $itemId => $line) {
             $qty = $line['quantity'];
             $price = $line['price'];
             $name = $line['name'];
@@ -67,6 +67,8 @@ class OrderController extends Controller
                 $allSpecialRequests[] = $specialRequests;
             }
         }
+
+        \Log::info('Special Requests Array:', ['special_requests' => $allSpecialRequests]);
 
         $order = Order::create([
             'customer_id' => $data['customer_id'],
