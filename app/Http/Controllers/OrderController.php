@@ -53,14 +53,19 @@ class OrderController extends Controller
         $cart = Session::get('cart', []);
         $total = 0;
         $pieces = [];
+        $allSpecialRequests = [];
 
         foreach ($cart as $line) {
             $qty = $line['quantity'];
             $price = $line['price'];
             $name = $line['name'];
+            $specialRequests = $line['special_requests'] ?? null; 
 
             $total += $qty * $price;
             $pieces[] = $qty . ' ' . $name . ($qty>1 ? 's' : '');
+            if ($specialRequests) {
+                $allSpecialRequests[] = $specialRequests;
+            }
         }
 
         $order = Order::create([
@@ -69,6 +74,7 @@ class OrderController extends Controller
             'total_price' => $total,
             'list_of_items' => implode(' and ', $pieces),
             'user_id' => $data['user_id'],
+            'special_requests' => implode('; ', $allSpecialRequests), 
         ]);
 
         Customer::find($order->customer_id)

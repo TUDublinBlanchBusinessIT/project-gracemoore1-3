@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-2xl font-bold mb-6">Order Details #{{ $order->id }}</h1>
-        
+
         <div class="bg-white shadow rounded-lg p-6">
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
@@ -25,7 +25,12 @@
                 <p>{{ $order->list_of_items }}</p>
             </div>
 
-            <a href="{{ route('orders.index') }}" 
+            <div class="mb-6">
+                <h2 class="font-semibold">Special Requests:</h2>
+                <p>{{ $order->special_requests ?? 'No special requests' }}</p>
+            </div>
+
+            <a href="{{ route('orders.index') }}"
                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 Back to Orders
             </a>

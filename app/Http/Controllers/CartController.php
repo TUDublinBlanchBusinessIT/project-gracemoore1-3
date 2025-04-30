@@ -28,6 +28,7 @@ class CartController extends Controller
                 'price'    => $item->price,
                 'image'    => $item->image,
                 'quantity' => $qty,
+                'special_requests' => $request->input('special_requests'),
             ];
         }
         session(['cart' => $cart]);
