@@ -56,7 +56,7 @@
                 </div>
             </form>
 
-            <div class="absolute top-[32px] right-0 flex flex-col space-y-3"> {{-- Adjusted top value --}}
+            <div class="absolute top-[32px] right-0 flex flex-col space-y-3"> {{-- Attempted top alignment --}}
                 @auth
                     <a href="{{ route('items.edit', $item->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                         <i class="ri-pencil-line" aria-label="Edit Item"></i>

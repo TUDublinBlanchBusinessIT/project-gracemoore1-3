@@ -26,8 +26,11 @@
                             <td class="px-6 py-4 whitespace-nowrap">{{ $employee->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $employee->email }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $employee->total_orders }}</td>
-                             <td class="px-6 py-4 whitespace-nowrap">
-                                <a href="{{ route('employees.edit', $employee) }}" class="text-blue-500 hover:underline">Edit</a>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="{{ route('employees.edit', $employee) }}" class="text-blue-500 hover:underline">
+                                    <i class="ri-pencil-line" aria-label="Edit Employee"></i>
+                                    <span class="sr-only">Edit</span>
+                                </a>
                             </td>
                         </tr>
                     @endforeach
