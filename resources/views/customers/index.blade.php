@@ -52,7 +52,7 @@
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <a href="{{ route('customers.edit', $customer) }}"  class="text-yellow-600 hover:text-yellow-900 hover:underline">
+                        <a href="{{ route('customers.edit', $customer) }}"  class="text-blue-600 hover:underline">
                             <i class="ri-pencil-line" aria-label="Edit Customer"></i>
                             <span class="sr-only">Edit</span>
                         </a>
