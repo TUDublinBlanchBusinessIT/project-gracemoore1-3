@@ -49,9 +49,15 @@
                         <td class="px-6 py-4">{{ Str::limit($order->list_of_items, 30) }}</td>
                         <td class="px-6 py-4 space-x-2">
                             <a href="{{ route('orders.show', $order) }}"
-                               class="text-blue-600 hover:underline">View</a>
+                               class="text-blue-600 hover:underline">
+                                <i class="ri-eye-line" aria-label="View Order"></i>
+                                <span class="sr-only">View Order</span>
+                            </a>
                             <a href="{{ route('orders.edit', $order) }}"
-                               class="text-yellow-600 hover:underline">Edit</a>
+                               class="text-yellow-600 hover:underline">
+                                 <i class="ri-pencil-line" aria-label="Edit Order"></i>
+                                <span class="sr-only">Edit Order</span>
+                            </a>
                         </td>
                         <td class="px-6 py-4 delete-column hidden">
                             <button class="delete-order-btn text-red-600 hover:text-red-800 focus:outline-none"
