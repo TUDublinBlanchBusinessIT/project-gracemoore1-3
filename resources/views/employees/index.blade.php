@@ -31,6 +31,14 @@
                                     <i class="ri-pencil-line" aria-label="Edit Employee"></i>
                                     <span class="sr-only">Edit</span>
                                 </a>
+                                <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:underline ml-2" onclick="return confirm('Are you sure you want to delete this employee?')">
+                                        <i class="ri-delete-bin-line" aria-label="Delete Employee"></i>
+                                        <span class="sr-only">Delete</span>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
@@ -39,5 +47,6 @@
         </div>
     </div>
 @endsection
+
 
 

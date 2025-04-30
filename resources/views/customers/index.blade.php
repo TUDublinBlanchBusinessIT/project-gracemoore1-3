@@ -4,8 +4,7 @@
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Customers</h1>
-        <a href="{{ route('customers.create') }}" 
-           class="bg-yellow-700 text-white px-4 py-2 rounded hover:bg-yellow-800 transition-colors">
+        <a href="{{ route('customers.create') }}"  class="bg-yellow-700 text-white px-4 py-2 rounded hover:bg-yellow-800 transition-colors">
             Add New Customer
         </a>
     </div>
@@ -32,14 +31,14 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-medium text-gray-900">{{ $customer->name }}</div>
                     </td>
-                
+                    
                     <td class="px-6 py-4 whitespace-nowrap">
                         @if($customer->number)
                             {{ $customer->number }}
-                         @else
+                        @else
                             <span class="text-gray-400">Not provided</span>
                         @endif
-                    </td>       
+                    </td>            
                     <td class="px-6 py-4 whitespace-nowrap">
                         @if($customer->latestOrder)
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
@@ -53,15 +52,16 @@
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <a href="{{ route('customers.edit', $customer) }}" 
-                           class="text-yellow-600 hover:text-yellow-900 hover:underline">Edit</a>
+                        <a href="{{ route('customers.edit', $customer) }}"  class="text-yellow-600 hover:text-yellow-900 hover:underline">
+                            <i class="ri-pencil-line" aria-label="Edit Customer"></i>
+                            <span class="sr-only">Edit</span>
+                        </a>
                         <form action="{{ route('customers.destroy', $customer) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" 
-                                    class="text-red-600 hover:text-red-900 hover:underline"
-                                    onclick="return confirm('Are you sure you want to delete this customer?')">
-                                Delete
+                            <button type="submit"  class="text-red-600 hover:text-red-900 hover:underline"  onclick="return confirm('Are you sure you want to delete this customer?')">
+                                <i class="ri-delete-bin-line" aria-label="Delete Customer"></i>
+                                <span class="sr-only">Delete</span>
                             </button>
                         </form>
                     </td>
