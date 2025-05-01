@@ -57,6 +57,10 @@
                                 <i class="ri-pencil-line" aria-label="Edit Order"></i>
                                 <span class="sr-only">Edit Order</span>
                             </a>
+                            <button class="delete-order-btn hidden text-red-500 hover:text-red-700 ml-2" 
+                                    data-order-id="{{ $order->id }}">
+                                ✕
+                            </button>
                         </td>
                         <td class="px-6 py-4">
                             <form action="{{ route('orders.complete', $order) }}" method="POST">
@@ -78,34 +82,27 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const deleteBtn = document.getElementById('delete-orders-btn');
-        const deleteColumns = document.querySelectorAll('.delete-column');
-
+        let deleteMode = false;
 
         // Toggle delete mode
         deleteBtn.addEventListener('click', function() {
-            const isDeleteMode = deleteColumns[0].classList.contains('hidden');
-
-            // Toggle visibility
-            deleteColumns.forEach(col => {
-                col.classList.toggle('hidden');
+            deleteMode = !deleteMode;
+            document.querySelectorAll('.delete-order-btn').forEach(btn => {
+                btn.style.display = deleteMode ? 'inline-block' : 'none';
             });
-
-
-            deleteBtn.textContent = isDeleteMode ? 'Cancel Delete' : 'Delete Orders';
-            deleteBtn.classList.toggle('bg-red-500');
-            deleteBtn.classList.toggle('bg-gray-500');
+            this.textContent = deleteMode ? 'Cancel Delete' : 'Delete Orders';
+            this.classList.toggle('bg-red-500');
+            this.classList.toggle('bg-gray-500');
         });
 
         // Handle delete actions
         document.querySelector('tbody').addEventListener('click', async function(e) {
-            const deleteOrderButton = e.target.closest('.delete-order-btn');
-            if (!deleteOrderButton) return;
+            const deleteBtn = e.target.closest('.delete-order-btn');
+            if (!deleteBtn) return;
 
             e.preventDefault();
-            e.stopPropagation();
-
-            const orderId = deleteOrderButton.dataset.orderId;
-            const row = deleteOrderButton.closest('tr');
+            const orderId = deleteBtn.dataset.orderId;
+            const row = deleteBtn.closest('tr');
 
             if (confirm('Are you sure you want to delete this order?')) {
                 try {
@@ -113,31 +110,24 @@
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include'
+                            'Accept': 'application/json'
+                        }
                     });
 
-                    const data = await response.json();
-
-                    if (!response.ok) {
-                        throw new Error(data.error || 'Failed to delete order');
-                    }
-
+                    if (!response.ok) throw new Error('Failed to delete');
+                    
                     row.remove();
-
-
+                    
+                    // Show success message
                     const message = document.createElement('div');
                     message.className = 'bg-green-100 text-green-800 p-3 rounded mb-6';
                     message.textContent = 'Order deleted successfully';
                     document.querySelector('.container').insertBefore(message, document.querySelector('.container').firstChild);
-
                     setTimeout(() => message.remove(), 3000);
-
+                    
                 } catch (error) {
                     console.error('Error:', error);
-                    alert(error.message || 'Error deleting order');
+                    alert('Failed to delete order');
                 }
             }
         });
