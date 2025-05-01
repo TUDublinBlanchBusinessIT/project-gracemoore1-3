@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\CompletedOrder; // Add this line
 
 class CompletedOrderController extends Controller
 {
@@ -14,7 +15,8 @@ class CompletedOrderController extends Controller
      */
     public function index()
     {
-        //
+        $completedOrders = CompletedOrder::all(); // Fetch completed orders
+        return view('completed_orders.index', compact('completedOrders')); // Pass data to view
     }
 
     /**
