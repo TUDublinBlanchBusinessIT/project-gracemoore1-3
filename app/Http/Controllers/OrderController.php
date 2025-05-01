@@ -135,44 +135,40 @@ class OrderController extends Controller
 
     public function completeOrder(Order $order)
     {
-        \Log::info("Starting order completion for ID: {$order->id}");
-        
-        DB::beginTransaction();
         try {
-            // Debug 1: Log what we're trying to save
-            \Log::debug('Order Data:', [
+        // 1. Verify order data
+            \Log::debug('Completing order:', [
+                'id' => $order->id,
+                'items' => $order->list_of_items,
+                'customer' => $order->customer_id
+            ]);
+
+        // 2. Create completed record
+            $completed = CompletedOrder::create([
                 'order_id' => $order->id,
                 'total_price' => $order->total_price,
-                'list_of_items' => $order->list_of_items,
+                'items_ordered' => $order->list_of_items,
                 'customer_id' => $order->customer_id
+            // Timestamps auto-populate
             ]);
-    
-            // Debug 2: Try raw SQL insertion
-            $inserted = DB::insert("
-                INSERT INTO completed_orders 
-                (order_id, total_price, items_ordered, customer_id, created_at, updated_at) 
-                VALUES (?, ?, ?, ?, NOW(), NOW())
-            ", [
-                $order->id,
-                $order->total_price,
-                $order->list_of_items,
-                $order->customer_id
-            ]);
-    
-            \Log::info("Raw SQL insert result: ".($inserted ? "Success" : "Failed"));
-    
-            // Debug 3: Verify via query
-            $exists = DB::select("SELECT id FROM completed_orders WHERE order_id = ?", [$order->id]);
-            \Log::info("Post-insert verification: ".json_encode($exists));
-    
+
+        // 3. Immediate physical verification
+            $verified = DB::selectOne(
+                "SELECT 1 FROM completed_orders WHERE id = ? FOR UPDATE", 
+                [$completed->id]
+            );
+
+            if (!$verified) {
+                throw new \Exception("Database-level verification failed");
+            }
+
+        // 4. Delete original order
             $order->delete();
-            DB::commit();
-    
+
             return back()->with('success', "Order #{$order->id} completed!");
-            
+
         } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error("COMPLETION ERROR: ".$e->getMessage());
+            \Log::error("Completion failed for Order #{$order->id}: ".$e->getMessage());
             return back()->with('error', "Failed: ".$e->getMessage());
         }
     }
