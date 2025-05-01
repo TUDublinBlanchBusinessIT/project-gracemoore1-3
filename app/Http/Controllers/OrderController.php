@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Customer;
+use App\Models\CompletedOrder; // Add this
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB; // Add this
 
 class OrderController extends Controller
 {
@@ -19,14 +21,14 @@ class OrderController extends Controller
     {
         $customers = Customer::all();
         $pickupDateTime = now()->addDay()->format('Y-m-d\TH:i');
-        return view('orders.create', compact('customers','pickupDateTime'));
+        return view('orders.create', compact('customers', 'pickupDateTime'));
     }
 
     public function index()
     {
         $orders = Order::with(['customer', 'user'])
-                    ->orderBy('created_at','desc')
-                    ->get();
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('orders.index', compact('orders'));
     }
@@ -59,10 +61,10 @@ class OrderController extends Controller
             $qty = $line['quantity'];
             $price = $line['price'];
             $name = $line['name'];
-            $specialRequests = $line['special_requests'] ?? null; 
+            $specialRequests = $line['special_requests'] ?? null;
 
             $total += $qty * $price;
-            $pieces[] = $qty . ' ' . $name . ($qty>1 ? 's' : '');
+            $pieces[] = $qty . ' ' . $name . ($qty > 1 ? 's' : '');
             if ($specialRequests) {
                 $allSpecialRequests[] = $specialRequests;
             }
@@ -76,7 +78,7 @@ class OrderController extends Controller
             'total_price' => $total,
             'list_of_items' => implode(' and ', $pieces),
             'user_id' => $data['user_id'],
-            'special_requests' => implode('; ', $allSpecialRequests), 
+            'special_requests' => implode('; ', $allSpecialRequests),
         ]);
 
         Customer::find($order->customer_id)
@@ -111,7 +113,7 @@ class OrderController extends Controller
         $order->update($validated);
 
         return redirect()->route('orders.show', $order)
-                        ->with('success', 'Order updated successfully');
+            ->with('success', 'Order updated successfully');
     }
 
     public function destroy(Order $order)
@@ -119,11 +121,10 @@ class OrderController extends Controller
         \Log::info("Delete attempt for order: " . $order->id);
         try {
             $order->delete();
-        
-            return request()->wantsJson() 
+
+            return request()->wantsJson()
                 ? response()->json(['success' => true])
                 : redirect()->route('orders.index')->with('success', 'Order deleted successfully');
-            
         } catch (\Exception $e) {
             return request()->wantsJson()
                 ? response()->json(['error' => $e->getMessage()], 500)
@@ -131,4 +132,23 @@ class OrderController extends Controller
         }
     }
 
+    public function completeOrder(Request $request, $id)  // Added this method
+    {
+        //use a transaction for atomicity
+        DB::transaction(function () use ($id) {
+            $order = Order::findOrFail($id);
+
+            CompletedOrder::create([
+                'order_id' => $order->id,
+                'total_price' => $order->total_price,
+                'items_ordered' => $order->list_of_items, // Corrected this
+                'customer_id' => $order->customer_id,
+            ]);
+
+            $order->delete();
+        });
+
+
+        return redirect()->route('orders.index')->with('success', 'Order completed and moved.');
+    }
 }

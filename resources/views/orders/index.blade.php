@@ -33,8 +33,7 @@
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Total</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Items</th>
                     <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase delete-column hidden">Delete</th>
-                </tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order Status</th> </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                 @foreach($orders as $order)
@@ -55,17 +54,17 @@
                             </a>
                             <a href="{{ route('orders.edit', $order) }}"
                                class="text-blue-600 hover:underline">
-                                 <i class="ri-pencil-line" aria-label="Edit Order"></i>
+                                <i class="ri-pencil-line" aria-label="Edit Order"></i>
                                 <span class="sr-only">Edit Order</span>
                             </a>
                         </td>
-                        <td class="px-6 py-4 delete-column hidden">
-                            <button class="delete-order-btn text-red-600 hover:text-red-800 focus:outline-none"
-                                    data-order-id="{{ $order->id }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
+                        <td class="px-6 py-4">
+                            <form action="{{ route('orders.complete', $order->id) }}" method="post">
+                                @csrf
+                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                    Completed
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach
@@ -81,6 +80,7 @@
         const deleteBtn = document.getElementById('delete-orders-btn');
         const deleteColumns = document.querySelectorAll('.delete-column');
 
+
         // Toggle delete mode
         deleteBtn.addEventListener('click', function() {
             const isDeleteMode = deleteColumns[0].classList.contains('hidden');
@@ -90,7 +90,7 @@
                 col.classList.toggle('hidden');
             });
 
-            // Update button text and color
+
             deleteBtn.textContent = isDeleteMode ? 'Cancel Delete' : 'Delete Orders';
             deleteBtn.classList.toggle('bg-red-500');
             deleteBtn.classList.toggle('bg-gray-500');
@@ -98,7 +98,7 @@
 
         // Handle delete actions
         document.querySelector('tbody').addEventListener('click', async function(e) {
-            const deleteOrderButton = e.target.closest('.delete-order-btn'); // Changed selector here
+            const deleteOrderButton = e.target.closest('.delete-order-btn');
             if (!deleteOrderButton) return;
 
             e.preventDefault();
@@ -116,7 +116,7 @@
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         },
-                        credentials: 'include' // Important for sessions
+                        credentials: 'include'
                     });
 
                     const data = await response.json();
@@ -125,10 +125,9 @@
                         throw new Error(data.error || 'Failed to delete order');
                     }
 
-                    // Remove the row from the table
                     row.remove();
 
-                    // Show success message
+
                     const message = document.createElement('div');
                     message.className = 'bg-green-100 text-green-800 p-3 rounded mb-6';
                     message.textContent = 'Order deleted successfully';
