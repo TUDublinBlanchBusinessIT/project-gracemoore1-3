@@ -46,6 +46,12 @@ class EmployeeController extends Controller
         return view('employees.edit', compact('employee'));
     }
 
+    public function destroy(User $employee)
+    {
+        $employee->delete();
+        return redirect()->route('employees.index')->with('success', 'Employee deleted successfully');
+    }
+
     public function update(Request $request, User $employee)
     {
         $request->validate([
