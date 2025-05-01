@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Customer;
-use App\Models\CompletedOrder; // Add this
+use App\Models\CompletedOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\DB; // Add this
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -132,23 +133,47 @@ class OrderController extends Controller
         }
     }
 
-    public function completeOrder(Request $request, $id)  // Added this method
+    public function completeOrder(Order $order)
     {
-        //use a transaction for atomicity
-        DB::transaction(function () use ($id) {
-            $order = Order::findOrFail($id);
-
-            CompletedOrder::create([
+        \Log::info("Starting order completion for ID: {$order->id}");
+        
+        DB::beginTransaction();
+        try {
+            // Debug 1: Log what we're trying to save
+            \Log::debug('Order Data:', [
                 'order_id' => $order->id,
                 'total_price' => $order->total_price,
-                'items_ordered' => $order->list_of_items, // Corrected this
-                'customer_id' => $order->customer_id,
+                'list_of_items' => $order->list_of_items,
+                'customer_id' => $order->customer_id
             ]);
-
+    
+            // Debug 2: Try raw SQL insertion
+            $inserted = DB::insert("
+                INSERT INTO completed_orders 
+                (order_id, total_price, items_ordered, customer_id, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, NOW(), NOW())
+            ", [
+                $order->id,
+                $order->total_price,
+                $order->list_of_items,
+                $order->customer_id
+            ]);
+    
+            \Log::info("Raw SQL insert result: ".($inserted ? "Success" : "Failed"));
+    
+            // Debug 3: Verify via query
+            $exists = DB::select("SELECT id FROM completed_orders WHERE order_id = ?", [$order->id]);
+            \Log::info("Post-insert verification: ".json_encode($exists));
+    
             $order->delete();
-        });
-
-
-        return redirect()->route('orders.index')->with('success', 'Order completed and moved.');
+            DB::commit();
+    
+            return back()->with('success', "Order #{$order->id} completed!");
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error("COMPLETION ERROR: ".$e->getMessage());
+            return back()->with('error', "Failed: ".$e->getMessage());
+        }
     }
 }

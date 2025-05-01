@@ -59,7 +59,7 @@
                             </a>
                         </td>
                         <td class="px-6 py-4">
-                            <form action="{{ route('orders.complete', $order->id) }}" method="post">
+                            <form action="{{ route('orders.complete', $order) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                                     Completed
