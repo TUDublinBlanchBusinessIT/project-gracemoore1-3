@@ -17,36 +17,36 @@
         </div>
     @endif
 
-    {{-- PROMO SECTION --}}
+    {{-- COMPACT PROMO SECTION - 6 ITEMS PER ROW --}}
     @php
-        $promoItems = $items->whereIn('name', ['Chocolate Cake', 'Chocolate Cupcake Box', 'Vanilla Iced Cake', 'Brookie Tray','Cookie Box']);
+        $promoItems = $items->whereIn('name', ['Chocolate Cake', 'Cupcake Box', 'Vanilla Iced Cake', 'Brookie Tray','Cookie Box','Cinnamon Roll Box']);
     @endphp
     
     @if($promoItems->count())
-    <div class="bg-amber-50 border-2 border-dashed border-amber-200 rounded-xl p-6 mb-8 text-center">
-        <h2 class="text-2xl font-bold text-amber-800 mb-6">ONE NOT ENOUGH?</h2>
-        <div class="flex flex-wrap justify-center gap-4">
+    <div class="mb-6 text-center">
+        <h2 class="text-lg font-bold text-amber-800 mb-2">ONE NOT ENOUGH?</h2>
+        <div class="flex flex-wrap justify-center gap-1 max-w-3xl mx-auto border border-amber-200 rounded-lg p-2 bg-amber-50">
             @foreach($promoItems as $item)
-                <div class="w-full sm:w-[calc(33.333%-1rem)] border rounded-lg overflow-hidden shadow hover:shadow-lg transition bg-white">
+                <div class="w-[15.5%] min-w-[75px] border border-amber-100 rounded-md overflow-hidden shadow-sm hover:shadow-md bg-white">
                     <a href="{{ route('items.show', $item) }}">
                         <img src="{{ asset('images/'.$item->image) }}" 
                              alt="{{ $item->name }}"
-                             class="w-full h-32 object-cover">
+                             class="w-full h-20 object-cover">
                     </a>
-                    <div class="p-3">
-                        <h3 class="font-semibold">{{ $item->name }}</h3>
-                        <p class="text-amber-600">${{ number_format($item->price, 2) }}</p>
+                    <div class="p-1">
+                        <h3 class="font-medium text-xs truncate">{{ $item->name }}</h3>
+                        <p class="text-amber-600 text-xs">${{ number_format($item->price, 2) }}</p>
                     </div>
                 </div>
             @endforeach
         </div>
-        <p class="text-amber-600 italic mt-4">Mix & Match – Order a Variety Today!</p>
+        <p class="text-amber-600 italic mt-2 text-xs">Mix & Match – Order a Variety Today!</p>
     </div>
     @endif
 
     {{-- MAIN ITEMS GRID --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        @foreach($items->whereNotIn('name', ['Chocolate Cake', 'Chocolate Cupcake Box', 'Vanilla Iced Cake', 'Brookie Tray','Cookie Box']) as $item)
+        @foreach($items->whereNotIn('name', ['Chocolate Cake', 'Cupcake Box', 'Vanilla Iced Cake', 'Brookie Tray','Cookie Box','Cinnamon Roll Box']) as $item)
             <div class="border rounded-lg overflow-hidden shadow hover:shadow-lg transition">
                 <a href="{{ route('items.show', $item) }}">
                     <img
