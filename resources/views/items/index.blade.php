@@ -1,6 +1,28 @@
 @extends('layouts.app')
 
 @section('content')
+    {{-- NEW PROMO SECTION --}}
+    <div class="bg-amber-50 border-2 border-dashed border-amber-200 rounded-xl p-6 mb-8 text-center">
+        <h2 class="text-2xl font-bold text-amber-800 mb-6">ONE NOT ENOUGH?</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            @foreach($items->whereIn('name', ['Chocolate Cake', 'Chocolate Cupcake Box', 'Vanilla Iced Cake', 'Brookie Tray','Cookie Box']) as $item)
+                <div class="border rounded-lg overflow-hidden shadow hover:shadow-lg transition bg-white">
+                    <a href="{{ route('items.show', $item) }}">
+                        <img src="{{ asset('images/'.$item->image) }}" 
+                             alt="{{ $item->name }}"
+                             class="w-full h-32 object-cover">
+                    </a>
+                    <div class="p-3">
+                        <h3 class="font-semibold">{{ $item->name }}</h3>
+                        <p class="text-amber-600">${{ number_format($item->price, 2) }}</p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        <p class="text-amber-600 italic mb-2">Mix & Match – Order a Variety Today!</p>
+    </div>
+
+    {{-- EXISTING CONTENT (ONLY CHANGED THE FOREACH LOOP) --}}
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Our Bakery</h1>
         <div class="flex space-x-2">
@@ -18,7 +40,7 @@
     @endif
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        @foreach($items as $item)
+        @foreach($items->whereNotIn('name', ['Chocolate Cake', 'Chocolate Cupcake Box', 'Vanilla Iced Cake', 'Brookie Tray','Cookie Box']) as $item)
             <div class="border rounded-lg overflow-hidden shadow hover:shadow-lg transition">
                 <a href="{{ route('items.show', $item) }}">
                     <img
